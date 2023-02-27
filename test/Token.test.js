@@ -4,7 +4,7 @@ const { developmentNetworks, tokenConfig } = require("../helper-hardhat.config")
 
 !developmentNetworks.includes(network.name)
   ? describe.skip
-  : describe("Token tests", async function () {
+  : describe("Token tests", function () {
       let token, owner, account1;
 
       const transferAmount = ethers.constants.One;
@@ -16,7 +16,7 @@ const { developmentNetworks, tokenConfig } = require("../helper-hardhat.config")
         token = await ethers.getContract("Token", owner);
       });
 
-      describe("Constructor", async function () {
+      describe("Constructor", function () {
         it("sets token name", async function () {
           assert.equal(await token.name(), tokenConfig.name);
         });
@@ -34,7 +34,7 @@ const { developmentNetworks, tokenConfig } = require("../helper-hardhat.config")
         });
       });
 
-      describe("transfer()", async function () {
+      describe("transfer()", function () {
         it("transfers correct amount", async function () {
           await token.transfer(account1.address, transferAmount);
           assert.equal((await token.balanceOf(account1.address)).toString(), transferAmount);
@@ -57,7 +57,7 @@ const { developmentNetworks, tokenConfig } = require("../helper-hardhat.config")
         });
       });
 
-      describe("approve()", async function () {
+      describe("approve()", function () {
         it("records correct allowance", async function () {
           await token.approve(account1.address, transferAmount);
           assert.equal((await token.allowance(owner.address, account1.address)).toString(), transferAmount);
@@ -75,7 +75,7 @@ const { developmentNetworks, tokenConfig } = require("../helper-hardhat.config")
         });
       });
 
-      describe("transferFrom()", async function () {
+      describe("transferFrom()", function () {
         transferAllowance = transferAmount.add(transferAmount);
         let sender, spender, recepient, initialSenderBalance;
 
