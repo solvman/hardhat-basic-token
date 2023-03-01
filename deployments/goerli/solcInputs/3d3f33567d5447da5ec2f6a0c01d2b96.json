@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Token.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.8.17;\n\nerror Token__ZeroAddressNotAllowed();\nerror Token__SenderInsufficientFunds();\nerror Token__SpenderZeroAddressNotAllowed();\nerror Token__AllowanceInsufficientFunds();\n\ncontract Token {\n    string public name;\n    string public symbol;\n    uint256 public decimals;\n    uint256 public totalSupply;\n\n    mapping(address => uint256) public balanceOf;\n    mapping(address => mapping(address => uint256)) public allowance;\n\n    event Transfer(address indexed from, address indexed to, uint256 value);\n    event Approval(address indexed owner, address indexed spender, uint256 value);\n\n    constructor(string memory _name, string memory _symbol, uint _decimals, uint _totalSupply) {\n        name = _name;\n        symbol = _symbol;\n        decimals = _decimals;\n        totalSupply = _totalSupply;\n        balanceOf[msg.sender] = totalSupply;\n    }\n\n    function _transfer(address _from, address _to, uint256 _value) internal {\n        if (_to == address(0x0)) {\n            revert Token__ZeroAddressNotAllowed();\n        }\n        balanceOf[_from] = balanceOf[_from] - (_value);\n        balanceOf[_to] = balanceOf[_to] + (_value);\n        emit Transfer(_from, _to, _value);\n    }\n\n    function transfer(address _to, uint256 _value) external returns (bool success) {\n        if (balanceOf[msg.sender] < _value) {\n            revert Token__SenderInsufficientFunds();\n        }\n        _transfer(msg.sender, _to, _value);\n        return true;\n    }\n\n    function approve(address _spender, uint256 _value) external returns (bool success) {\n        if (_spender == address(0)) {\n            revert Token__SpenderZeroAddressNotAllowed();\n        }\n        allowance[msg.sender][_spender] = _value;\n        emit Approval(msg.sender, _spender, _value);\n        return true;\n    }\n\n    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {\n        if (_value > balanceOf[_from]) {\n            revert Token__SenderInsufficientFunds();\n        }\n        if (_value > allowance[_from][msg.sender]) {\n            revert Token__AllowanceInsufficientFunds();\n        }\n        allowance[_from][msg.sender] = allowance[_from][msg.sender] - (_value);\n        _transfer(_from, _to, _value);\n        return true;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
